@@ -3,11 +3,14 @@
  ****************/
 
 const PLAYERS = ['red', 'black'];
-let t = 0;
+let t = 1;
 let grid;
 
 const nextTurn = () => {
   t = t === 0 ? 1 : 0;
+  const el = document.querySelector('section');
+  clearElement(el);
+  el.appendChild(document.createTextNode(`${PLAYERS[t]}'s turn`));
 };
 
 const resetGrid = () => {
@@ -31,14 +34,14 @@ const placeByCol = (color, col) => {
     console.log("Can't, column is filled");
   } else {
     grid[row][col] = color;
+    nextTurn();
+    drawGrid();
   }
 };
 
 const placeOnClick = (e) => {
   if (e.target !== e.currentTarget) {
     placeByCol(PLAYERS[t], e.target.dataset.column);
-    nextTurn();
-    drawGrid();
   }
   e.stopPropagation();
 };
@@ -53,12 +56,13 @@ const drawGrid = () => {
   const tableEl = document.querySelector('table');
   clearElement(tableEl);
 
-  grid.forEach(row => {
+  grid.forEach((row, y) => {
     const rowEl = document.createElement('tr');
 
-    row.forEach((col, index) => {
+    row.forEach((col, x) => {
       const cellEl = document.createElement('td');
-      cellEl.dataset.column = index;
+      cellEl.dataset.row = y;
+      cellEl.dataset.column = x;
       cellEl.dataset.player = col;
       rowEl.appendChild(cellEl);
     });
@@ -67,11 +71,35 @@ const drawGrid = () => {
   });
 };
 
+const highlightCol = (e, add = true) => {
+  if (e.target !== e.currentTarget) {
+    const column = e.target.dataset.column;
+    const row = findEmptyRowByCol(column);
+    const emptyEl = document.querySelector(`td[data-column="${column}"][data-row="${row}"]`);
+    const tdClass = 'highlight';
+    const tableClass = `column-${column}`;
+
+    if (add) {
+      emptyEl.classList.add(tdClass);
+      e.currentTarget.classList.add(tableClass);
+    } else {
+      emptyEl.classList.remove(tdClass);
+      e.currentTarget.classList.remove(tableClass);
+    }
+  }
+  e.stopPropagation();
+};
+
+const unhighlightCol = (e) => highlightCol(e, false);
+
 const init = () => {
   const tableEl = document.querySelector('table');
-  tableEl.addEventListener('click', placeOnClick, false);
+  tableEl.addEventListener('click', placeOnClick);
+  tableEl.addEventListener('mouseover', highlightCol);
+  tableEl.addEventListener('mouseout', unhighlightCol);
 
   resetGrid();
+  nextTurn();
   drawGrid();
 };
 
