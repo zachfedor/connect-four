@@ -2,9 +2,13 @@
  * Connect Four *
  ****************/
 
-const PLAYERS = ['#a20e0e', '#444'];
+const PLAYERS = ['red', 'black'];
 let t = 0;
 let grid;
+
+const nextTurn = () => {
+  t = t === 0 ? 1 : 0;
+};
 
 const resetGrid = () => {
   // Create an empty array of 6 rows. Fill it with null values in order
@@ -30,6 +34,15 @@ const placeByCol = (color, col) => {
   }
 };
 
+const placeOnClick = (e) => {
+  if (e.target !== e.currentTarget) {
+    placeByCol(PLAYERS[t], e.target.dataset.column);
+    nextTurn();
+    drawGrid();
+  }
+  e.stopPropagation();
+};
+
 const clearElement = (el) => {
   while(el.firstChild) {
     el.removeChild(el.firstChild);
@@ -40,27 +53,26 @@ const drawGrid = () => {
   const tableEl = document.querySelector('table');
   clearElement(tableEl);
 
-  for (let row of grid) {
+  grid.forEach(row => {
     const rowEl = document.createElement('tr');
 
-    for (let col of row) {
+    row.forEach((col, index) => {
       const cellEl = document.createElement('td');
-      if (col !== null) {
-        cellEl.style.background = col;
-      }
+      cellEl.dataset.column = index;
+      cellEl.dataset.player = col;
       rowEl.appendChild(cellEl);
-    }
+    });
 
     tableEl.appendChild(rowEl);
-  }
+  });
 };
 
 const init = () => {
+  const tableEl = document.querySelector('table');
+  tableEl.addEventListener('click', placeOnClick, false);
+
   resetGrid();
-  placeByCol(PLAYERS[0], 5);
-  placeByCol(PLAYERS[1], 5);
-  placeByCol(PLAYERS[0], 4);
-  placeByCol(PLAYERS[1], 3);
+  drawGrid();
 };
 
 window.onload = init;

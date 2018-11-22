@@ -9,12 +9,28 @@
     <style>
       table {
         background: gold;
+        border: 5px solid goldenrod;
+        margin: 5rem auto;
+        padding: 5px;
       }
       td {
+        background: white;
         padding: 2rem;
         margin: 5px;
-        border: 1px solid black;
+        border: 2px solid goldenrod;
         border-radius: 50%;
+      }
+      td[data-player="null"]:hover {
+        background: goldenrod;
+        cursor: pointer;
+      }
+      td[data-player="black"] {
+        background: #444444;
+        border-color: #000;
+      }
+      td[data-player="red"] {
+        background: #a20e0e;
+        border-color: #5a0904;
       }
     </style>
   </head>
