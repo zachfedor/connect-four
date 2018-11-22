@@ -2,8 +2,7 @@
  * Connect Four *
  ****************/
 
-const PLAYERS = ['x', 'o'];
-// const PLAYERS = ['a20e0e', '444'];
+const PLAYERS = ['#a20e0e', '#444'];
 let t = 0;
 let grid;
 
@@ -24,10 +23,35 @@ const findEmptyRowByCol = (col) => {
 
 const placeByCol = (color, col) => {
   let row = findEmptyRowByCol(col);
-  if (row > 0) {
-    grid[row][col] = color;
-  } else {
+  if (row < 0) {
     console.log("Can't, column is filled");
+  } else {
+    grid[row][col] = color;
+  }
+};
+
+const clearElement = (el) => {
+  while(el.firstChild) {
+    el.removeChild(el.firstChild);
+  }
+};
+
+const drawGrid = () => {
+  const tableEl = document.querySelector('table');
+  clearElement(tableEl);
+
+  for (let row of grid) {
+    const rowEl = document.createElement('tr');
+
+    for (let col of row) {
+      const cellEl = document.createElement('td');
+      if (col !== null) {
+        cellEl.style.background = col;
+      }
+      rowEl.appendChild(cellEl);
+    }
+
+    tableEl.appendChild(rowEl);
   }
 };
 
